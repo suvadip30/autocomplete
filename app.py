@@ -66,6 +66,23 @@ def auto_complete():
     return ab
 
 
+def add():
+    r = redis.StrictRedis(host='localhost', port=6379, db=0)
+    read_dict = r.get('auto_dump')
+    dic_auto = pickle.loads(read_dict)
+    for line in dic_auto:
+        n = line.strip()
+
+        for ln in range(1, len(n) + 1):
+            prefix = n[0:ln]
+            print(prefix)
+            r.zadd('auto_complete', {prefix: 0})
+        r.zadd('auto_complete', {n + "%": 0})
+
+    else:
+        exit()
+
+
 @app.route('/autocomplete/query=<path:query>')
 def auto_search(query):
     print(query)
